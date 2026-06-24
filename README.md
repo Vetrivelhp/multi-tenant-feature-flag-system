@@ -50,6 +50,76 @@ A SaaS-style feature flag management system that allows a software host to manag
 
 ---
 
+## Installation
+
+### Clone Repository
+
+```bash
+git clone https://github.com/Vetrivelhp/multi-tenant-feature-flag-system
+```
+
+### Navigate to Backend
+
+```bash
+cd multi-tenant-feature-flag-system
+cd backend
+```
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Start Server
+
+```bash
+node app.js
+```
+
+Server runs on:
+
+```text
+http://localhost:3000
+```
+
+---
+
+## Frontend Pages
+
+### Super Admin
+
+To test super admin create **.env** file in backend and use the following or your custom name and password:
+```text
+SUPER_ADMIN_EMAIL=super@admin.com
+SUPER_ADMIN_PASSWORD=foobar
+```
+
+```text
+http://localhost:3000/super_admin/login.html
+
+http://localhost:3000/super_admin/create_org.html
+
+http://localhost:3000/super_admin/org_list.html
+```
+
+### Admin
+
+```text
+http://localhost:3000/admin/signup.html
+
+http://localhost:3000/admin/login.html
+
+http://localhost:3000/admin/feature_flags.html
+```
+
+### End User
+
+```text
+http://localhost:3000/user/check_feature.html
+```
+---
+
 ## Project Structure
 
 ```text
@@ -176,77 +246,6 @@ Can:
 Can:
 
 * Check feature availability
-
----
-
-## Installation
-
-### Clone Repository
-
-```bash
-git clone https://github.com/Vetrivelhp/multi-tenant-feature-flag-system
-```
-
-### Navigate to Backend
-
-```bash
-cd multi-tenant-feature-flag-system
-cd backend
-```
-
-### Install Dependencies
-
-```bash
-npm install
-```
-
-### Start Server
-
-```bash
-node app.js
-```
-
-Server runs on:
-
-```text
-http://localhost:3000
-```
-
----
-
-## Frontend Pages
-
-### Super Admin
-
-To test super admin create ==.env== file in backend and use the following or your custom name and password:
-```text
-SUPER_ADMIN_EMAIL=super@admin.com
-SUPER_ADMIN_PASSWORD=foobar
-```
-
-```text
-http://localhost:3000/super_admin/login.html
-
-http://localhost:3000/super_admin/create_org.html
-
-http://localhost:3000/super_admin/org_list.html
-```
-
-### Admin
-
-```text
-http://localhost:3000/admin/signup.html
-
-http://localhost:3000/admin/login.html
-
-http://localhost:3000/admin/feature_flags.html
-```
-
-### End User
-
-```text
-http://localhost:3000/user/check_feature.html
-```
 
 ---
 
