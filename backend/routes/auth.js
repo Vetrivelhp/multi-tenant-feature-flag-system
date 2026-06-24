@@ -6,7 +6,7 @@ const { users, organizations } = require('../db/schema');
 const { eq } = require('drizzle-orm');
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_key';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Super admin login (static credentials from .env)
 router.post('/super-admin/login', (req, res) => {
