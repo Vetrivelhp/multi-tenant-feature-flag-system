@@ -184,12 +184,13 @@ Can:
 ### Clone Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Vetrivelhp/multi-tenant-feature-flag-system
 ```
 
 ### Navigate to Backend
 
 ```bash
+cd multi-tenant-feature-flag-system
 cd backend
 ```
 
