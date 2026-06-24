@@ -4,8 +4,6 @@
 
 A SaaS-style feature flag management system that allows a software host to manage organizations, organization administrators to manage feature flags, and end users to check whether specific features are enabled for their organization.
 
-This project was developed as part of a Software Developer assignment and demonstrates role-based access control, multi-tenant architecture, REST API design, authentication, and feature flag management.
-
 ---
 
 ## Features
@@ -220,7 +218,11 @@ http://localhost:3000
 ### Super Admin
 
 ```text
-http://localhost:3000/super-admin/login.html
+http://localhost:3000/super_admin/login.html
+
+http://localhost:3000/super_admin/create_org.html
+
+http://localhost:3000/super_admin/org_list.html
 ```
 
 ### Admin
@@ -260,22 +262,6 @@ This prevents cross-organization access and demonstrates tenant-level data isola
 * Protected administrative endpoints
 
 ---
-
-## Assignment Requirements Covered
-
-* Super Admin Login
-* Create Organizations
-* View Organizations
-* Admin Signup
-* Admin Login
-* Create Feature Flags
-* Enable/Disable Feature Flags
-* Delete Feature Flags
-* Organization Scoped Feature Flags
-* End User Feature Check
-* Persistent Database Storage
-* Custom Authentication
-* Multi-Tenant Architecture
 
 ```
 ```
