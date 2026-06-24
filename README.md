@@ -264,5 +264,3 @@ This prevents cross-organization access and demonstrates tenant-level data isola
 
 ---
 
-```
-```
