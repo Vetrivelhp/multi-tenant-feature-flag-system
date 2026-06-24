@@ -218,6 +218,12 @@ http://localhost:3000
 
 ### Super Admin
 
+To test super admin create ==.env== file in backend and use the following or your custom name and password:
+```text
+SUPER_ADMIN_EMAIL=super@admin.com
+SUPER_ADMIN_PASSWORD=foobar
+```
+
 ```text
 http://localhost:3000/super_admin/login.html
 
