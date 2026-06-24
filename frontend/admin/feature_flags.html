@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feature Flags</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 2rem; }
+    .container { max-width: 750px; margin: 0 auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    h2 { color: #333; }
+    .top-btns { display: flex; gap: 0.5rem; }
+    button { padding: 0.6rem 1.2rem; background: #4f46e5; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+    button:hover { background: #4338ca; }
+    .logout { background: #ef4444; }
+    .logout:hover { background: #dc2626; }
+    .form-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+    .form-card h3 { margin-bottom: 1rem; color: #333; font-size: 16px; }
+    .form-row { display: flex; gap: 0.8rem; align-items: center; }
+    input[type="text"] { flex: 1; padding: 0.6rem 0.8rem; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+    .toggle { display: flex; align-items: center; gap: 0.4rem; font-size: 14px; color: #555; }
+    table { width: 100%; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-collapse: collapse; }
+    th, td { padding: 0.9rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+    th { background: #f8f9fa; color: #555; font-weight: 600; }
+    .badge { padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .badge.on { background: #dcfce7; color: #16a34a; }
+    .badge.off { background: #fee2e2; color: #dc2626; }
+    .action-btns { display: flex; gap: 0.4rem; }
+    .btn-sm { padding: 0.3rem 0.7rem; font-size: 12px; }
+    .btn-danger { background: #ef4444; }
+    .btn-danger:hover { background: #dc2626; }
+    .empty { text-align: center; padding: 2rem; color: #999; }
+    .success { color: green; font-size: 13px; margin-top: 0.5rem; display: none; }
+    .error { color: red; font-size: 13px; margin-top: 0.5rem; display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Feature Flags</h2>
+      <div class="top-btns">
+        <button class="logout" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3>Create New Flag</h3>
+      <div class="form-row">
+        <input type="text" id="featureKey" placeholder="e.g. dark_mode" />
+        <label class="toggle">
+          <input type="checkbox" id="enabled" /> Enabled
+        </label>
+        <button onclick="createFlag()">Add Flag</button>
+      </div>
+      <p class="success" id="createSuccess">Flag created!</p>
+      <p class="error" id="createError">Something went wrong.</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Feature Key</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="flagList">
+        <tr><td colspan="3" class="empty">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) window.location.href = 'login.html';
+
+    async function loadFlags() {
+      const res = await fetch('http://localhost:3000/flags/list', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const flags = await res.json();
+      const tbody = document.getElementById('flagList');
+
+      if (flags.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="empty">No flags yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = flags.map(flag => `
+        <tr id="row-${flag.id}">
+          <td>${flag.featureKey}</td>
+          <td><span class="badge ${flag.enabled ? 'on' : 'off'}">${flag.enabled ? 'Enabled' : 'Disabled'}</span></td>
+          <td>
+            <div class="action-btns">
+              <button class="btn-sm" onclick="toggleFlag(${flag.id}, ${flag.enabled})">${flag.enabled ? 'Disable' : 'Enable'}</button>
+              <button class="btn-sm btn-danger" onclick="deleteFlag(${flag.id})">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function createFlag() {
+      const featureKey = document.getElementById('featureKey').value.trim();
+      const enabled = document.getElementById('enabled').checked;
+
+      if (!featureKey) return;
+
+      const res = await fetch('http://localhost:3000/flags/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ featureKey, enabled })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        document.getElementById('createSuccess').style.display = 'block';
+        document.getElementById('createError').style.display = 'none';
+        document.getElementById('featureKey').value = '';
+        document.getElementById('enabled').checked = false;
+        setTimeout(() => document.getElementById('createSuccess').style.display = 'none', 2000);
+        loadFlags();
+      } else {
+        document.getElementById('createError').innerText = data.error || 'Something went wrong';
+        document.getElementById('createError').style.display = 'block';
+        document.getElementById('createSuccess').style.display = 'none';
+      }
+    }
+
+    async function toggleFlag(id, currentEnabled) {
+      const res = await fetch(`http://localhost:3000/flags/update/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ enabled: !currentEnabled })
+      });
+
+      if (res.ok) loadFlags();
+    }
+
+    async function deleteFlag(id) {
+      if (!confirm('Delete this flag?')) return;
+
+      const res = await fetch(`http://localhost:3000/flags/delete/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+
+      if (res.ok) loadFlags();
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    }
+
+    loadFlags();
+  </script>
+</body>
+</html>

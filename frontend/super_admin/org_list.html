@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Organizations</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 2rem; }
+    .container { max-width: 700px; margin: 0 auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    h2 { color: #333; }
+    button { padding: 0.6rem 1.2rem; background: #4f46e5; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+    button:hover { background: #4338ca; }
+    .logout { background: #ef4444; }
+    .logout:hover { background: #dc2626; }
+    table { width: 100%; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-collapse: collapse; }
+    th, td { padding: 0.9rem 1rem; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+    th { background: #f8f9fa; color: #555; font-weight: 600; }
+    td { color: #333; }
+    .empty { text-align: center; padding: 2rem; color: #999; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Organizations</h2>
+      <div style="display:flex; gap:0.5rem;">
+        <button onclick="window.location.href='create_org.html'">+ Create Org</button>
+        <button class="logout" onclick="logout()">Logout</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>#</th><th>ID</th><th>Name</th></tr>
+      </thead>
+      <tbody id="orgList">
+        <tr><td colspan="3" class="empty">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) window.location.href = 'login.html';
+
+    async function loadOrgs() {
+      const res = await fetch('http://localhost:3000/org/list', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const orgs = await res.json();
+      const tbody = document.getElementById('orgList');
+
+      if (orgs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="empty">No organizations yet</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = orgs.map((org, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${org.id}</td>
+          <td>${org.name}</td>
+        </tr>
+      `).join('');
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    }
+
+    loadOrgs();
+  </script>
+</body>
+</html>

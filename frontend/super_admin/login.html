@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Super Admin Login</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 360px; }
+    h2 { margin-bottom: 1.5rem; color: #333; }
+    label { display: block; margin-bottom: 0.4rem; color: #555; font-size: 14px; }
+    input { width: 100%; padding: 0.6rem 0.8rem; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 1rem; font-size: 14px; }
+    button { width: 100%; padding: 0.7rem; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 15px; cursor: pointer; }
+    button:hover { background: #4338ca; }
+    .error { color: red; font-size: 13px; margin-bottom: 1rem; display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Super Admin Login</h2>
+    <p class="error" id="error">Invalid credentials</p>
+    <label>Email</label>
+    <input type="email" id="email" placeholder="superadmin@system.com" />
+    <label>Password</label>
+    <input type="password" id="password" placeholder="••••••••" />
+    <button onclick="login()">Login</button>
+  </div>
+
+  <script>
+    async function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const res = await fetch('http://localhost:3000/auth/super-admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        window.location.href = 'org_list.html';
+      } else {
+        document.getElementById('error').style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Check Feature</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 420px; }
+    h2 { margin-bottom: 0.5rem; color: #333; }
+    p.sub { color: #888; font-size: 13px; margin-bottom: 1.5rem; }
+    label { display: block; margin-bottom: 0.4rem; color: #555; font-size: 14px; }
+    select, input[type="text"] { width: 100%; padding: 0.6rem 0.8rem; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 1rem; font-size: 14px; background: white; }
+    button { width: 100%; padding: 0.7rem; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 15px; cursor: pointer; }
+    button:hover { background: #4338ca; }
+    button:disabled { background: #a5b4fc; cursor: not-allowed; }
+    .result { margin-top: 1.2rem; padding: 1rem; border-radius: 6px; text-align: center; display: none; }
+    .result.enabled { background: #dcfce7; color: #16a34a; }
+    .result.disabled { background: #fee2e2; color: #dc2626; }
+    .result.error { background: #fef9c3; color: #b45309; }
+    .result .icon { font-size: 2rem; margin-bottom: 0.4rem; }
+    .result .label { font-size: 16px; font-weight: 600; }
+    .result .key { font-size: 13px; margin-top: 0.3rem; opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Check Feature Flag</h2>
+    <p class="sub">Select your organization and enter a feature key to check if it's enabled.</p>
+
+    <label>Organization</label>
+    <select id="orgSelect" onchange="loadFlags()">
+      <option value="">-- Select Organization --</option>
+    </select>
+
+    <label>Feature Key</label>
+    <select id="flagSelect" disabled>
+      <option value="">-- Select an org first --</option>
+    </select>
+
+    <button onclick="checkFeature()" id="checkBtn">Check</button>
+
+    <div class="result" id="result">
+      <div class="icon" id="resultIcon"></div>
+      <div class="label" id="resultLabel"></div>
+      <div class="key" id="resultKey"></div>
+    </div>
+  </div>
+
+  <script>
+    // Load all orgs on page load
+    async function loadOrgs() {
+      const res = await fetch('http://localhost:3000/org/list/public');
+      const orgs = await res.json();
+
+      const select = document.getElementById('orgSelect');
+      orgs.forEach(org => {
+        const option = document.createElement('option');
+        option.value = org.id;
+        option.innerText = org.name;
+        select.appendChild(option);
+      });
+    }
+
+    // Load flags for selected org
+    async function loadFlags() {
+      const orgId = document.getElementById('orgSelect').value;
+      const flagSelect = document.getElementById('flagSelect');
+      const resultEl = document.getElementById('result');
+
+      resultEl.style.display = 'none';
+
+      if (!orgId) {
+        flagSelect.innerHTML = '<option value="">-- Select an org first --</option>';
+        flagSelect.disabled = true;
+        return;
+      }
+
+      const res = await fetch(`http://localhost:3000/flags/list/public/${orgId}`);
+      const flags = await res.json();
+
+      flagSelect.disabled = false;
+      if (flags.length === 0) {
+        flagSelect.innerHTML = '<option value="">No flags found for this org</option>';
+        return;
+      }
+
+      flagSelect.innerHTML = '<option value="">-- Select a feature --</option>';
+      flags.forEach(flag => {
+        const option = document.createElement('option');
+        option.value = flag.featureKey;
+        option.innerText = flag.featureKey;
+        flagSelect.appendChild(option);
+      });
+    }
+
+    async function checkFeature() {
+      const orgId = document.getElementById('orgSelect').value;
+      const featureKey = document.getElementById('flagSelect').value;
+      const resultEl = document.getElementById('result');
+
+      if (!orgId || !featureKey) return;
+
+      const res = await fetch(`http://localhost:3000/flags/check/public/${orgId}/${featureKey}`);
+      const data = await res.json();
+
+      resultEl.style.display = 'block';
+
+      if (res.ok) {
+        if (data.enabled) {
+          resultEl.className = 'result enabled';
+          document.getElementById('resultIcon').innerText = '✅';
+          document.getElementById('resultLabel').innerText = 'Feature is Enabled';
+        } else {
+          resultEl.className = 'result disabled';
+          document.getElementById('resultIcon').innerText = '❌';
+          document.getElementById('resultLabel').innerText = 'Feature is Disabled';
+        }
+        document.getElementById('resultKey').innerText = `Feature: ${data.featureKey}`;
+      } else {
+        resultEl.className = 'result error';
+        document.getElementById('resultIcon').innerText = '⚠️';
+        document.getElementById('resultLabel').innerText = data.error || 'Something went wrong';
+        document.getElementById('resultKey').innerText = '';
+      }
+    }
+
+    loadOrgs();
+  </script>
+</body>
+</html>
