@@ -120,15 +120,15 @@ http://localhost:3000/user/check_feature.html
 ```
 ---
 ## Screenshots
-![Admin Signup] (screenshots/Screenshot (971).png)
+![Admin Signup](screenshots/Screenshot (971).png)
 
-![Feature Flags] (screenshots/Screenshot (972).png)
+![Feature Flags](screenshots/Screenshot (972).png)
 
-![Create Organization] (screenshots/Screenshot (973).png)
+![Create Organization](screenshots/Screenshot (973).png)
 
-![Check Feature Flags] (screenshots/Screenshot (974).png)
+![Check Feature Flags](screenshots/Screenshot (974).png)
 
-![Check Feature Flags] (screenshots/Screenshot (975).png)
+![Check Feature Flags](screenshots/Screenshot (975).png)
 ---
 
 ## Project Structure
