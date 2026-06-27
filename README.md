@@ -120,7 +120,7 @@ http://localhost:3000/user/check_feature.html
 ```
 ---
 ## Screenshots
-![Admin Signup](screenshots/Screenshot (971).png)
+![Admin Signup](screenshots/admin_signup.png)
 
 ![Feature Flags](screenshots/Screenshot (972).png)
 
