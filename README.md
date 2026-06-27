@@ -122,13 +122,13 @@ http://localhost:3000/user/check_feature.html
 ## Screenshots
 ![Admin Signup](screenshots/admin_signup.png)
 
-![Feature Flags](screenshots/Screenshot (972).png)
+![Feature Flags](screenshots/feature_flag.png)
 
-![Create Organization](screenshots/Screenshot (973).png)
+![Create Organization](screenshots/orgs.png)
 
-![Check Feature Flags](screenshots/Screenshot (974).png)
+![Check Feature Flags](screenshots/chk_fea_1.png)
 
-![Check Feature Flags](screenshots/Screenshot (975).png)
+![Check Feature Flags](screenshots/chk_fea_2.png)
 ---
 
 ## Project Structure
